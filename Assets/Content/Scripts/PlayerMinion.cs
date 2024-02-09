@@ -11,7 +11,7 @@ enum PlayerState
     DEAD
 }
 
-public class Player : MonoBehaviour
+public class PlayerMinion : MonoBehaviour
 {
     public int lives;
     public int movementLimit;

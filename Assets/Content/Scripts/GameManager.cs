@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     GameState currentState;
     [SerializeField]
-    Player player;
+    PlayerMinion player;
 
     [SerializeField]
     GameObject gridCellPrefab;
