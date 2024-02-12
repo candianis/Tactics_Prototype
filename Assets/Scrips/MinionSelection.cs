@@ -30,22 +30,7 @@ public class MinionSelection : MonoBehaviour
         if (Input.GetMouseButtonUp(0)) {
             RealeaseSelection();
         }
-        if (Input.GetMouseButton(0)) {
-            UpdateSelectionBox(Input.mousePosition);
-        }
 
-    }
-
-    void UpdateSelectionBox(Vector2 curMousePos) {
-        if (!selectionBox.gameObject.activeInHierarchy)
-        {
-            selectionBox.gameObject.SetActive(true);
-        }
-        float width = curMousePos.x - boxStartPos.x;
-        float height = curMousePos.y - boxStartPos.y;
-
-        selectionBox.sizeDelta = new Vector2(Mathf.Abs(width), Mathf.Abs(height));
-        selectionBox.anchoredPosition = boxStartPos + new Vector2(width / 2, height / 2);
     }
 
     void Select(Vector2 screenPos) {
