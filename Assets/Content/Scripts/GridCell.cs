@@ -13,10 +13,5 @@ public class GridCell : MonoBehaviour
 {
     public Vector3 position;
     public GridType type;
-
-
-    private void Update()
-    {
-        
-    }
+    public Vector2Int gridID;
 }
