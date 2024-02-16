@@ -6,30 +6,63 @@ public class MinionsCommands : MonoBehaviour
 {
     public LayerMask layerMask;
 
-    private MinionSelection MinionSelection;
+    private MinionSelection minionSelection;
     private Camera cam;
 
-    private void Awake() {
-        MinionSelection = GetComponent<MinionSelection>();
+    private void Awake()
+    {
+        minionSelection = GetComponent<MinionSelection>();
         cam = Camera.main;
     }
 
-    private void Update() {
-        if (Input.GetMouseButtonDown(1) && MinionSelection.HasMinionsSelected()){
+    private void Update()
+    {
+        if (Input.GetMouseButtonDown(1) && minionSelection.HasMinionsSelected())
+        {
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
-            Minion[] selectedMinions = MinionSelection.GetSelectedUnits();
-            if (Physics.Raycast(ray, out hit, 100, layerMask)) {
-                if (hit.collider.CompareTag("Ground")) {
-                    MinionsMovesToPos(hit.point, selectedMinions);
+            Minion[] selectedMinions = minionSelection.GetSelectedUnits();
+            if (Physics.Raycast(ray, out hit, 100, layerMask))
+            {
+                if (hit.collider.CompareTag("Ground"))
+                {
+                    Vector3 cellPos = CellCheck();
+
+                    if (cellPos != Vector3.zero)
+                    {
+                        MinionsMovesToPos(cellPos, selectedMinions);
+
+                    }
                 }
             }
         }
     }
-    void MinionsMovesToPos(Vector3 movepos, Minion[] minion) {
-        for (int x = 0; x < minion.Length; x++) {
-            minion[x].MoveToPosition(movepos);
+
+    public Vector3 CellCheck()
+    {
+        RaycastHit hit;
+        Vector3 mousePosition = Input.mousePosition;
+        mousePosition.z = Camera.main.nearClipPlane;
+        Ray ray = Camera.main.ScreenPointToRay(mousePosition);
+
+        if (Physics.Raycast(ray, out hit, 100))
+        {
+            if (hit.transform.TryGetComponent(out GridCell gridCell))
+            {
+                Debug.Log(gridCell.name);
+                return gridCell.transform.position;
+
+            }
+        }
+        return Vector3.zero;
+    }
+
+    public void MinionsMovesToPos(Vector3 targetPosition, Minion[] minions)
+    {
+        for (int x = 0; x < minions.Length; x++)
+        {
+            minions[x].MoveToPosition(targetPosition);
         }
     }
 }

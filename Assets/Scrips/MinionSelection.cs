@@ -11,7 +11,11 @@ public class MinionSelection : MonoBehaviour
     private Camera cam;
     private PlayerMinions player;
 
-    private Vector2 boxStartPos;
+    private MinionsCommands minionsCommands;
+
+    private Minion minion;
+
+    private bool minionSelected = false;
 
     private void Awake() {
         cam = Camera.main;
@@ -25,11 +29,8 @@ public class MinionSelection : MonoBehaviour
             selectedMinionsLits = new List<Minion>();
 
             Select(Input.mousePosition);
-            boxStartPos = Input.mousePosition;
         }
-        if (Input.GetMouseButtonUp(0)) {
-            RealeaseSelection();
-        }
+
 
     }
 
@@ -37,27 +38,18 @@ public class MinionSelection : MonoBehaviour
         Ray ray = cam.ScreenPointToRay(screenPos);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, 100, minionLayerMask)) {
-            Minion minion = hit.collider.GetComponent<Minion>();
+            minion = hit.collider.GetComponent<Minion>();
             if (player.IsMyMinions(minion)) {
                 selectedMinionsLits.Add(minion);
                 minion.ToggleSelectionVisual(true);
-            }
-        }
-    }
-    void RealeaseSelection() {
-        selectionBox.gameObject.SetActive(false);
-        Vector2 min = selectionBox.anchoredPosition - (selectionBox.sizeDelta / 2);
-        Vector2 max = selectionBox.anchoredPosition + (selectionBox.sizeDelta / 2);
 
-        foreach (Minion minion in player.minions) {
-            Vector3 screenPos = cam.WorldToScreenPoint(minion.transform.position);
-            if (screenPos.x > min.x && screenPos.x < max.x && screenPos.y > min.y && screenPos.y < max.y) {
-                selectedMinionsLits.Add(minion);
-                minion.ToggleSelectionVisual(true);
             }
         }
 
     }
+
+
+
 
     void VisualToggleSelection(bool selected) {
         foreach (Minion minion in selectedMinionsLits) {
