@@ -19,8 +19,6 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     List<GameObject> gridCells;
     [SerializeField]
-    GameState currentState;
-    [SerializeField]
     PlayerMinion player;
 
     [SerializeField]
@@ -44,8 +42,6 @@ public class GameManager : MonoBehaviour
         {
             DontDestroyOnLoad(this);
         }
-
-        currentState = GameState.INIT;
     }
 
     void Update()

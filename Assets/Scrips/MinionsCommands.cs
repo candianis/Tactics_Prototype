@@ -8,15 +8,27 @@ public class MinionsCommands : MonoBehaviour
 
     private MinionSelection minionSelection;
     private Camera cam;
-
+    private bool alradySpawn = false;
+ 
     private void Awake()
     {
+        
         minionSelection = GetComponent<MinionSelection>();
         cam = Camera.main;
     }
 
     private void Update()
     {
+        
+        if (minionSelection != null && Input.GetMouseButton(0) && !alradySpawn)  {
+          
+            PlayerMinions.instance.MinionSpawnV(CellCheck());
+            Debug.Log(CellCheck());
+     
+            alradySpawn = true;
+           
+        }
+        
         if (Input.GetMouseButtonDown(1) && minionSelection.HasMinionsSelected())
         {
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
@@ -50,7 +62,7 @@ public class MinionsCommands : MonoBehaviour
         {
             if (hit.transform.TryGetComponent(out GridCell gridCell))
             {
-                Debug.Log(gridCell.name);
+               // Debug.Log(gridCell.name);
                 return gridCell.transform.position;
 
             }
@@ -65,4 +77,5 @@ public class MinionsCommands : MonoBehaviour
             minions[x].MoveToPosition(targetPosition);
         }
     }
+
 }

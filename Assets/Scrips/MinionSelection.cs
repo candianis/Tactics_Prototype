@@ -11,11 +11,8 @@ public class MinionSelection : MonoBehaviour
     private Camera cam;
     private PlayerMinions player;
 
-    private MinionsCommands minionsCommands;
-
     private Minion minion;
-
-    private bool minionSelected = false;
+    public Vector3 originPos;
 
     private void Awake() {
         cam = Camera.main;
@@ -46,6 +43,24 @@ public class MinionSelection : MonoBehaviour
             }
         }
 
+    }
+    public void CheckMinionOriginPos()
+    {
+        if (originPos == null)
+        {
+            Minion[] selectedMinion = GetSelectedUnits();
+            Ray ray = new Ray(selectedMinion[0].transform.position, Vector3.down);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+            {
+                if (hit.transform.TryGetComponent(out GridCell gridCell))
+                {
+                    originPos = gridCell.transform.position;
+                    Debug.Log("OriginPos " + originPos);
+                }
+            }
+
+        }
     }
 
 
