@@ -18,8 +18,8 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     List<GameObject> gridCells;
-    [SerializeField]
-    PlayerMinion player;
+    //[SerializeField]
+    //PlayerMinion player;
 
     [SerializeField]
     GameObject gridCellPrefab;
@@ -30,7 +30,9 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] 
     GenericEnemy[] enemies;
+    public bool isCrouching = false;
     
+    public MinionsCommands commands;
 
     void Start()
     {
@@ -47,6 +49,21 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         DecisionManager();
+        if( Input.GetKeyDown(KeyCode.LeftShift) )
+        {
+            Debug.Log("agachado");
+            isCrouching=true;
+            commands.moveLimint /= 2;
+        }
+        else
+        if( Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            Debug.Log("parado");
+            isCrouching=false;
+            commands.moveLimint *= 2;
+
+        }
+
     }
 
     void DecisionManager()

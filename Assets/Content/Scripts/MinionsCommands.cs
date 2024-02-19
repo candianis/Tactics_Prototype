@@ -10,6 +10,7 @@ public class MinionsCommands : MonoBehaviour
     private Camera cam;
     private bool alradySpawn = false;
     public Vector2Int nextCellID;
+    public int moveLimint;
     private void Awake()
     {
 
@@ -77,12 +78,35 @@ public class MinionsCommands : MonoBehaviour
 
                 if (nextCellID.x == minionSelection.cellID.x || nextCellID.y == minionSelection.cellID.y)
                 {
+                    
+                    if(nextCellID.x != minionSelection.cellID.x)
+                    {
+                        int xdiference= Mathf.Abs(minionSelection.cellID.x - nextCellID.x);
+                        int moveAmount = xdiference;
+
+                        if(moveAmount > moveLimint) 
+                        {
+                            return Vector3.zero;
+                        }
+                    }
+
+                    if (nextCellID.y != minionSelection.cellID.y)
+                    {
+                        int ydiference = Mathf.Abs(minionSelection.cellID.y - nextCellID.y);
+                        int moveAmount = ydiference;
+                        if(moveAmount > moveLimint) 
+                        {
+                            return Vector3.zero;
+                        }
+                    }
+
                     minionSelection.cellID = nextCellID;
                     return gridCell.transform.position;
 
 
                 }
 
+                
             }
         }
         return Vector3.zero;
