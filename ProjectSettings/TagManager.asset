@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Ground
   - Minions
+  - Key
+  - Door
   layers:
   - Default
   - TransparentFX
