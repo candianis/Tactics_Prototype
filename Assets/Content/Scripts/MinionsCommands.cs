@@ -5,12 +5,13 @@ using UnityEngine;
 public class MinionsCommands : MonoBehaviour
 {
     public LayerMask layerMask;
+    public Vector2Int nextCellID;
+    public int moveLimint;
+    public bool playerTurn = true;
 
     private MinionSelection minionSelection;
     private Camera cam;
     private bool alradySpawn = false;
-    public Vector2Int nextCellID;
-    public int moveLimint;
     private void Awake()
     {
 
@@ -27,12 +28,11 @@ public class MinionsCommands : MonoBehaviour
             Debug.Log(CellCheck());
             minionSelection.originPos = CellCheck();
             minionSelection.cellID = nextCellID;
-            
             alradySpawn = true;
 
         }
 
-        if (Input.GetMouseButtonDown(1) && minionSelection.HasMinionsSelected())
+        if (Input.GetMouseButtonDown(1) && minionSelection.HasMinionsSelected() && playerTurn)
         {
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -44,12 +44,12 @@ public class MinionsCommands : MonoBehaviour
                 {
                     Vector3 cellPos = CellCheck();
 
-                 
                     if (cellPos != Vector3.zero)
                     {
-                        minionSelection.originPos = cellPos;
 
+                        minionSelection.originPos = cellPos;
                         MinionsMovesToPos(cellPos, selectedMinions);
+                        playerTurn = false;
 
                     }
                 }
