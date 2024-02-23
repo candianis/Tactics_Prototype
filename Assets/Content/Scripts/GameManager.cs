@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-enum GameState
+public enum GameState
 {
     INIT,
     GAME,
@@ -10,16 +12,28 @@ enum GameState
     PAUSE
 }
 
+enum TurnState
+{
+    PLAYER_TURN,
+    AI_TURN
+}
+
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
     public int gridHeight, gridWidth;
+    public float timeToWait;
 
     [SerializeField]
     List<GameObject> gridCells;
-    //[SerializeField]
-    //PlayerMinion player;
+    public GameState currentState;
+
+    [SerializeField]
+    TurnState turnState;
+
+    [SerializeField]
+    PlayerMinion player;
 
     [SerializeField]
     GameObject gridCellPrefab;
@@ -28,10 +42,13 @@ public class GameManager : MonoBehaviour
     Material availableMat;
     Material obstacleMat;
 
-    [SerializeField] 
-    GenericEnemy[] enemies;
+    public GameObject gameOverMenu;
+
     public bool isCrouching = false;
-    
+
+    [SerializeField]
+    GenericEnemy[] enemies;
+
     public MinionsCommands commands;
 
     void Start()
@@ -49,36 +66,55 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         DecisionManager();
-        if( Input.GetKeyDown(KeyCode.LeftShift) )
+        if (Input.GetKeyDown(KeyCode.LeftShift))
         {
-            Debug.Log("agachado");
-            isCrouching=true;
+            isCrouching = true;
             commands.moveLimint /= 2;
         }
         else
-        if( Input.GetKeyUp(KeyCode.LeftShift))
+        if (Input.GetKeyUp(KeyCode.LeftShift))
         {
-            Debug.Log("parado");
-            isCrouching=false;
+            isCrouching = false;
             commands.moveLimint *= 2;
 
         }
-
     }
 
     void DecisionManager()
     {
-        //if (player.lives <= 0)
-        //    currentState = GameState.GAMEOVER;
+        if(currentState == GameState.GAMEOVER)
+        {
+            gameOverMenu.SetActive(true);
+            return;
+        }
 
+        if (!commands.playerTurn)
+        {
+            turnState = TurnState.AI_TURN;
+        }
 
+        if(turnState == TurnState.AI_TURN)
+            StartCoroutine(MoveEnemies());
     }
+
+    IEnumerator MoveEnemies()
+    {
+        turnState = TurnState.PLAYER_TURN;
+        yield return new WaitForSeconds(timeToWait);
+        foreach (GenericEnemy enemy in enemies)
+        {
+            enemy.currentState = EnemyState.MOVE;
+        }
+        commands.playerTurn = true;
+    }
+
+    #region Grid Logic
 
     public Vector3 GetGridCell(Vector2Int gridPosition)
     {
-        foreach(GameObject cell in gridCells)
+        foreach (GameObject cell in gridCells)
         {
-            if(!TryGetComponent(out GridCell gridCell))
+            if (!TryGetComponent(out GridCell gridCell))
             {
                 continue;
             }
@@ -94,8 +130,8 @@ public class GameManager : MonoBehaviour
 
     public void CreateGrid()
     {
-        for(float y = transform.position. z + 0.5f; y < (transform.position.z + gridHeight); y++)
-            for(float x = transform.position.x + 0.5f; x < (transform.position.x + gridWidth); x++)
+        for (float y = transform.position.z + 0.5f; y < (transform.position.z + gridHeight); y++)
+            for (float x = transform.position.x + 0.5f; x < (transform.position.x + gridWidth); x++)
             {
                 GameObject goCell = Instantiate(gridCellPrefab);
                 goCell.transform.localPosition = new Vector3(x, -1.4f, y);
@@ -103,13 +139,13 @@ public class GameManager : MonoBehaviour
                 goCell.transform.localRotation = Quaternion.identity;
                 goCell.transform.SetParent(this.transform);
 
-                if(goCell.TryGetComponent(out GridCell gridCell))
+                if (goCell.TryGetComponent(out GridCell gridCell))
                 {
                     gridCell.position = new Vector3(x, y, 0);
                     gridCell.type = GridType.WALKABLE;
                     gridCell.gridID = new Vector2Int(((int)x), ((int)y));
                 }
-                goCell.name = "Cell(" + gridCell.gridID.x  + "," + gridCell.gridID.y + ")";
+                goCell.name = "Cell(" + gridCell.gridID.x + "," + gridCell.gridID.y + ")";
 
                 gridCells.Add(goCell);
             }
@@ -120,10 +156,24 @@ public class GameManager : MonoBehaviour
         if (gridCells.Count <= 0)
             return;
 
-        foreach(GameObject cell in gridCells)
+        foreach (GameObject cell in gridCells)
         {
             DestroyImmediate(cell, false);
         }
         gridCells.Clear();
+    }
+    #endregion
+
+    public void RestartGame()
+    { 
+        SceneManager.LoadScene(0);
+    }
+
+    public void EndGame()
+    {
+        #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+        #endif
+        Application.Quit();
     }
 }

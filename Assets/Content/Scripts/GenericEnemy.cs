@@ -1,46 +1,65 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using static UnityEngine.GraphicsBuffer;
 
-enum EnemyState
+public enum EnemyState
 {
+    START,
     INIT,
     MOVE,
     WAIT,
     DEAD
 }
 
-enum LookDirection
-{
-    UP,
-    DOWN,
-    RIGHT,
-    LEFT
-}
-
 public class GenericEnemy : MonoBehaviour
 {
-    [SerializeField] 
-    EnemyState currentState;
-    [SerializeField] 
-    LookDirection direction;
-    [SerializeField] 
-    Vector2Int currentPosition;
-    [SerializeField] 
-    Vector2Int nextPosition;
+    public EnemyState currentState;
+    [SerializeField]
+    GridCell[] cellPath;
+    [SerializeField]
+    GridCell currentCell;
+    [SerializeField, Tooltip("The current cell inside the path")]
+    int cellIndex;
+
     [SerializeField] 
     int speed;
 
+    [SerializeField]
+    bool moveBackward;
+
+    [SerializeField]
+    Transform m_target;
+
+    [SerializeField]
+    Collider[] perceivedColliders;
+
+    [SerializeField]
+    Transform perceptionPosition;
+
+    [SerializeField]
+    float detectionRadius;
+
     void Start()
     {
-        
+        cellIndex = 0;
+        currentCell = cellPath[0];
     }
 
     void Update()
     {
-        ActionManager();   
+        ActionManager();
+        DetectionManager();
     }
 
+    private void FixedUpdate()
+    {
+        perceivedColliders = Physics.OverlapSphere(perceptionPosition.position, detectionRadius);
+    }
+
+    #region Action Manager
     void ActionManager()
     {
         switch (currentState)
@@ -54,6 +73,7 @@ public class GenericEnemy : MonoBehaviour
                 break;
 
             case EnemyState.WAIT:
+
                 break;
 
             case EnemyState.DEAD:
@@ -66,36 +86,72 @@ public class GenericEnemy : MonoBehaviour
 
     void GetNextPosition()
     {
-        nextPosition = currentPosition;
-        direction = (LookDirection)Random.Range(0, 3);
-        switch (direction)
-        {
-            case LookDirection.UP:
-                nextPosition += new Vector2Int(0, speed);
-                break;
-            case LookDirection.DOWN:
-                nextPosition -= new Vector2Int(0, speed);
-                break;
-            case LookDirection.RIGHT:
-                nextPosition += new Vector2Int(speed, 0);
-                break;
+        ++cellIndex;
+        if (cellIndex >= cellPath.Length)
+            cellIndex = 0;
 
-            case LookDirection.LEFT:
-                nextPosition -= new Vector2Int(speed, 0);
-                break;
-        }
+        currentCell = cellPath[cellIndex];
         currentState = EnemyState.WAIT;
     }
 
     void MoveToNextPosition()
     {
-        Vector3 newPosition = new Vector3(nextPosition.x, nextPosition.y, 0);
-        transform.position = Vector2.MoveTowards(transform.position, newPosition, speed * Time.deltaTime);
+        float yPos = transform.position.y;
+        Vector3 nextPosition = currentCell.transform.position;
+        nextPosition.y = yPos;
 
-        if (Vector3.Distance(transform.position, newPosition) < 0.125f)
+        transform.position = Vector3.MoveTowards(transform.position, nextPosition, speed * Time.deltaTime);
+
+        if (Vector3.Distance(transform.position, nextPosition) < 0.125f)
         {
-            currentState = EnemyState.WAIT;
-            currentPosition = nextPosition;
+            currentState = EnemyState.INIT;
         }
+    }
+
+    #endregion
+
+    #region Detection Manager
+
+    void DetectionManager()
+    {
+        PerceptionManager(perceivedColliders);
+
+        if (m_target == null)
+            return;
+
+        GameManager.instance.currentState = GameState.GAMEOVER;
+
+    }
+
+    /// <summary>
+    /// Target a perceived collider based on a tag
+    /// </summary>
+    /// <param name="perceivedColliders"></param>
+    /// <param name="tagToTarget"></param>
+    public void PerceptionManager(Collider[] perceivedColliders)
+    {
+        m_target = null;
+        if (perceivedColliders != null)
+        {
+            foreach (Collider collider in perceivedColliders)
+            {
+                if (!collider)
+                    continue;
+
+                if(collider.TryGetComponent(out Minion minion) && !GameManager.instance.isCrouching)
+                {
+                    m_target = minion.transform;
+                    break;
+                }
+            }
+        }
+    }
+
+    #endregion
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(perceptionPosition.position, detectionRadius);
     }
 }

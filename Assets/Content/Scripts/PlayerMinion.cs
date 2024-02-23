@@ -29,7 +29,7 @@ public class PlayerMinion : MonoBehaviour
     {
         SelectGrid();
     }
-
+    //
     void SelectGrid()
     {
         if(Input.GetMouseButtonDown(0))

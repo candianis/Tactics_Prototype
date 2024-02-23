@@ -12,6 +12,7 @@ public class MinionsCommands : MonoBehaviour
     private MinionSelection minionSelection;
     private Camera cam;
     private bool alradySpawn = false;
+
     private void Awake()
     {
 
