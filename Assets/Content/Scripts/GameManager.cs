@@ -101,9 +101,13 @@ public class GameManager : MonoBehaviour
     {
         turnState = TurnState.PLAYER_TURN;
         yield return new WaitForSeconds(timeToWait);
-        foreach (GenericEnemy enemy in enemies)
+        if (enemies.Length > 0)
         {
-            enemy.currentState = EnemyState.MOVE;
+            foreach (GenericEnemy enemy in enemies)
+            {
+                if(enemy)
+                    enemy.currentState = EnemyState.MOVE;
+            }
         }
         commands.playerTurn = true;
     }

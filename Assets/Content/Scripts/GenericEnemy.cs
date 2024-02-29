@@ -45,7 +45,8 @@ public class GenericEnemy : MonoBehaviour
     void Start()
     {
         cellIndex = 0;
-        currentCell = cellPath[0];
+        if(cellPath.Length > 0)
+            currentCell = cellPath[0];
     }
 
     void Update()
@@ -87,6 +88,9 @@ public class GenericEnemy : MonoBehaviour
     void GetNextPosition()
     {
         ++cellIndex;
+        if (cellPath.Length <= 0)
+            return;
+
         if (cellIndex >= cellPath.Length)
             cellIndex = 0;
 
@@ -96,6 +100,8 @@ public class GenericEnemy : MonoBehaviour
 
     void MoveToNextPosition()
     {
+        if (currentCell == null)
+            return;
         float yPos = transform.position.y;
         Vector3 nextPosition = currentCell.transform.position;
         nextPosition.y = yPos;
