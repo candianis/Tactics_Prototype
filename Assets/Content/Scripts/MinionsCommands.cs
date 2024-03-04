@@ -23,6 +23,9 @@ public class MinionsCommands : MonoBehaviour
     private void Update()
     {
 
+        if (GameManager.instance.currentState != GameState.GAME)
+            return;
+
         if (minionSelection != null && Input.GetMouseButton(0) && !alradySpawn) {
 
             PlayerMinions.instance.MinionSpawnV(CellCheck());

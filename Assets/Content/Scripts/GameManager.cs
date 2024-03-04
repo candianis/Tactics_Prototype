@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 public enum GameState
 {
     INIT,
+    MENU,
     GAME,
     GAMEOVER,
     PAUSE
@@ -28,6 +29,8 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     List<GameObject> gridCells;
     public GameState currentState;
+
+    [SerializeField] GameObject pauseMenu;
 
     [SerializeField]
     TurnState turnState;
@@ -78,6 +81,8 @@ public class GameManager : MonoBehaviour
             commands.moveLimint *= 2;
 
         }
+
+        PauseGame();
     }
 
     void DecisionManager()
@@ -95,6 +100,7 @@ public class GameManager : MonoBehaviour
 
         if(turnState == TurnState.AI_TURN)
             StartCoroutine(MoveEnemies());
+
     }
 
     IEnumerator MoveEnemies()
@@ -179,5 +185,16 @@ public class GameManager : MonoBehaviour
             UnityEditor.EditorApplication.isPlaying = false;
         #endif
         Application.Quit();
+    }
+
+    public void PauseGame() {
+        if (Input.GetKeyDown(KeyCode.Escape)) {
+            pauseMenu.SetActive(true);
+            currentState = GameState.PAUSE;
+        }
+    }
+
+    public void UnpauseGame() {
+        currentState = GameState.GAME;
     }
 }
