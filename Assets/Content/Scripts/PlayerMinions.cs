@@ -11,7 +11,6 @@ public class PlayerMinions : MonoBehaviour
     public List<Minion> minions = new List<Minion>();
     public GameObject minionPref;
     public Vector3 spawnMinionPos;
-
     private void Awake()
     {
         if (instance == null)

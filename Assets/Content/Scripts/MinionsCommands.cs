@@ -12,6 +12,7 @@ public class MinionsCommands : MonoBehaviour
     private MinionSelection minionSelection;
     private Camera cam;
     private bool alradySpawn = false;
+    public ColorCells colorCells;
 
     private void Awake()
     {
@@ -22,14 +23,13 @@ public class MinionsCommands : MonoBehaviour
 
     private void Update()
     {
-
+        
         if (GameManager.instance.currentState != GameState.GAME)
             return;
 
         if (minionSelection != null && Input.GetMouseButton(0) && !alradySpawn) {
 
             PlayerMinions.instance.MinionSpawnV(CellCheck());
-            Debug.Log(CellCheck());
             minionSelection.originPos = CellCheck();
             minionSelection.cellID = nextCellID;
             alradySpawn = true;
@@ -54,6 +54,7 @@ public class MinionsCommands : MonoBehaviour
                         minionSelection.originPos = cellPos;
                         MinionsMovesToPos(cellPos, selectedMinions);
                         playerTurn = false;
+                        minionSelection.UnSelectMove();
 
                     }
                 }
@@ -72,7 +73,6 @@ public class MinionsCommands : MonoBehaviour
         {
             if (hit.transform.TryGetComponent(out GridCell gridCell))
             {
-                Debug.Log(gridCell.name);
                 nextCellID = gridCell.gridID;
 
                 if (!alradySpawn)

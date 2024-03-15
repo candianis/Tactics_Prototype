@@ -33,7 +33,15 @@ public class MinionSelection : MonoBehaviour
 
 
     }
+    public void UnSelectMove()
+    {
 
+        VisualToggleSelection(false);
+        selectedMinionsLits = new List<Minion>();
+        Select(Input.mousePosition);
+
+
+    }
     void Select(Vector2 screenPos) {
         Ray ray = cam.ScreenPointToRay(screenPos);
         RaycastHit hit;

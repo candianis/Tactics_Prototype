@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 6189190332065698892}
   m_Layer: 0
   m_Name: Cell
-  m_TagString: Untagged
+  m_TagString: Cell
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -112,3 +112,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   position: {x: 0, y: 0, z: 0}
   type: 0
+  gridID: {x: 0, y: 0}

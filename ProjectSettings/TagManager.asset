@@ -8,6 +8,8 @@ TagManager:
   - Minions
   - Key
   - Door
+  - Cell
+  - nada
   layers:
   - Default
   - TransparentFX

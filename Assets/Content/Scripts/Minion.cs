@@ -7,6 +7,7 @@ public class Minion : MonoBehaviour
 {
     public GameObject selectionVisual;
     private NavMeshAgent navAgent;
+    public ColorCells colorCells;
 
     private void Awake() {
         navAgent = GetComponent<NavMeshAgent>();
@@ -14,6 +15,7 @@ public class Minion : MonoBehaviour
 
     public void ToggleSelectionVisual(bool selected) {
         selectionVisual.SetActive(selected);
+        colorCells.ChangeCellColor();
     }
 
     public void MoveToPosition(Vector3 pos) {
