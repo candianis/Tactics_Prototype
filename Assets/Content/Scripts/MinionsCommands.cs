@@ -23,8 +23,7 @@ public class MinionsCommands : MonoBehaviour
 
     private void Update()
     {
-        
-        if (GameManager.instance.currentState != GameState.GAME)
+        if (GameManager.instance.currentState != GameState.GAME || GameManager.instance.turnState == TurnState.AI_TURN)
             return;
 
         if (minionSelection != null && Input.GetMouseButton(0) && !alradySpawn) {
@@ -105,6 +104,7 @@ public class MinionsCommands : MonoBehaviour
                     }
 
                     minionSelection.cellID = nextCellID;
+                    GameManager.instance.turnState = TurnState.AI_TURN;
                     return gridCell.transform.position;
 
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 public enum GameState
 {
@@ -13,7 +14,7 @@ public enum GameState
     PAUSE
 }
 
-enum TurnState
+public enum TurnState
 {
     PLAYER_TURN,
     AI_TURN
@@ -32,8 +33,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] GameObject pauseMenu;
 
-    [SerializeField]
-    TurnState turnState;
+    public TurnState turnState;
 
     [SerializeField]
     PlayerMinion player;
@@ -53,6 +53,9 @@ public class GameManager : MonoBehaviour
     GenericEnemy[] enemies;
 
     public MinionsCommands commands;
+    public int keysAmount;
+    public TextMeshProUGUI keyText;
+    public GameObject crouchingTexture;
 
     void Start()
     {
@@ -62,26 +65,26 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            DontDestroyOnLoad(this);
+            Destroy(this);
         }
     }
 
     void Update()
     {
         DecisionManager();
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
+        if (Input.GetKeyDown(KeyCode.LeftShift)) {
             isCrouching = true;
             commands.moveLimint /= 2;
+            crouchingTexture.SetActive(true);
         }
         else
-        if (Input.GetKeyUp(KeyCode.LeftShift))
-        {
+        if (Input.GetKeyUp(KeyCode.LeftShift)) {
             isCrouching = false;
             commands.moveLimint *= 2;
-
+            crouchingTexture.SetActive(false);
         }
 
+            //  keyText.text = "Llaves: " + keysAmount;
         PauseGame();
     }
 
@@ -105,8 +108,8 @@ public class GameManager : MonoBehaviour
 
     IEnumerator MoveEnemies()
     {
-        turnState = TurnState.PLAYER_TURN;
-        yield return new WaitForSeconds(timeToWait);
+        Debug.Log("ai");
+        yield return new WaitForSeconds(1.5f);
         if (enemies.Length > 0)
         {
             foreach (GenericEnemy enemy in enemies)
@@ -116,6 +119,8 @@ public class GameManager : MonoBehaviour
             }
         }
         commands.playerTurn = true;
+        yield return new WaitForSeconds(timeToWait);
+        turnState = TurnState.PLAYER_TURN;
     }
 
     #region Grid Logic
@@ -176,7 +181,7 @@ public class GameManager : MonoBehaviour
 
     public void RestartGame()
     { 
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(1);
     }
 
     public void EndGame()

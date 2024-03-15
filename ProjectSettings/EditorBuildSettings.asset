@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Test_IA.unity
-    guid: a71ef657b4c9bb444b1863dc0e524134
+    path: Assets/Scenes/Test_Chuyx.unity
+    guid: 55178109e49233548a08301441da6271
   m_configObjects: {}

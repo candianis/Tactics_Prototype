@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class MinionsDoors : MonoBehaviour
 {
-    [SerializeField] public float Keys =0;
+    public float Keys =0;
     public void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Key"))
         {
             Debug.Log("choco con llave");
             Keys++;
+            GameManager.instance.keysAmount = (int)Keys;
             Destroy(other.gameObject);
         }
 
@@ -20,6 +21,7 @@ public class MinionsDoors : MonoBehaviour
 
             Destroy(other.gameObject);
             Keys--;
+            GameManager.instance.keysAmount = (int)Keys;
         }
     }
 

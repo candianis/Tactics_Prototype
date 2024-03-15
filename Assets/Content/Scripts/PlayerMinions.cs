@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -29,11 +30,15 @@ public class PlayerMinions : MonoBehaviour
 
     public void MinionSpawnV( Vector3 minionPos)
     {
-            GameObject spawnMinion = Instantiate(minionPref);
-            spawnMinion.transform.position = minionPos;
+        GameObject spawnMinion = Instantiate(minionPref);
+        spawnMinion.transform.position = minionPos;
             
-            Minion spawnFirtsMinion = spawnMinion.GetComponent<Minion>();
-            minions.Add(spawnFirtsMinion);
+        Minion spawnFirtsMinion = spawnMinion.GetComponent<Minion>();
+        minions.Add(spawnFirtsMinion);
+
+        CinemachineVirtualCamera cam = Camera.main.GetComponent<CinemachineVirtualCamera>();
+        cam.Follow = spawnMinion.transform;
+
     }
 
 }
